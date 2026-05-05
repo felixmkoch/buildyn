@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "buildyn"
+version = "0.9"
+authors = [
+    { name="Felix Koch", email="felix.koch@th-rosenheim.de" },
+    { name="Thomas Krug", email="thomas.krug@th-rosenheim.de" }
+]
+readme = "README.md"
+requires-python = "==3.13.*"
+
+dependencies = [
+    "more-itertools==10.6.0",
+    "json-five==1.1.2",
+    "fmpy==0.3.22",
+    "matplotlib==3.10.1",
+    "numpy==2.2.4",
+    "pandas==2.2.3",
+    "plotly==6.0.0",
+    "regex==2024.11.6",
+    "scipy==1.15.2",
+    "ruff==0.1.10",
+    "tqdm==4.67.1"
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
