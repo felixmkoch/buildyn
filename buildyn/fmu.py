@@ -62,13 +62,14 @@ class FMU:
             self.variable_starts[name] = variable.start
             self.variable_types[name] = variable.type
 
-        # If state dict is not yet available, create it.
+        # If state dict is not yet available, create it FROM FMU FILE != FMU_START_DICT.JSON!!
         self.fmu_state_dict = {
             k: self.__type_map.get(self.variable_types[k], lambda x: x)(v) 
             if v is not None else None
             for k, v in self.variable_starts.items() 
         }
 
+        # only update parameters from the fmu_state_dict that are None
         self.fmu_state_dict.update(
             {k: v for k, v in self.init_values.items() if self.fmu_state_dict.get(k, -1) is None}
         )
@@ -104,37 +105,33 @@ class FMU:
         self.converter = None
 
 
-    def set_initial_variables(self, variables: dict):
+    def set_initial_variables(self, variables: dict = {}):
+
 
         if self.has_entered_exited_mode:
             raise Exception("FMU already entered the initialization mode. You probably called set_initial_variables more than once, which is not allowed.")
 
         self.fmu.enterInitializationMode()
 
+        # deepcopy fmu_state_dict variables and initial values
+        variables_to_update = deepcopy(self.fmu_state_dict)
+        variables_to_update |= self.init_values
+
+        # if converter is specified, iteratively update state dict with converter function output
         if self.converter:
 
-            variables = self.converter.get_converter_variables() | variables        # Update missing values in variables with the converter variables if needed.
-            variables = self.init_values | variables                                # Also use the init_values as updates.
-
-            conversion_result_dict = {}
+            conversion_result_dict = self.converter.get_converter_variables()
 
             for converter_function in self.converter.get_converter_functions():
 
-                convert_dict = {}
-                convert_dict.update(self.fmu_state_dict)
-                convert_dict.update(variables)
-                convert_dict.update(conversion_result_dict)
+                convert_dict = self.fmu_state_dict | self.init_values | variables | conversion_result_dict
 
-                conversion_result_dict.update(converter_function.convert(convert_dict))
+                conversion_result_dict |= converter_function.convert(convert_dict)
 
-            variables.update(conversion_result_dict)
+            variables_to_update |= conversion_result_dict
 
-            variables_to_update = {k: v for k, v in variables.items() if k in self.fmu_state_dict and v !=self.fmu_state_dict[k]}
-        
-        else:
-
-            variables_to_update = self.init_values
-            variables_to_update = variables_to_update | variables       # Update with the variables specified in the argument of this function.
+        # include args of this function
+        variables_to_update |= variables
 
         # Save updated variables for later (copy for instance).
         self.updated_fmu_state.update(variables_to_update)
@@ -153,6 +150,7 @@ class FMU:
 
     def _enter_exit_init_mode(self):
         # Not sure if this is all right. Need to check whether this works as intended. Until then, init_fmu({}) is a workaround.
+        # self.init_values possibly does not contain all necessary variables, as they are updated from the self.fmu_state_dict
 
         self.fmu.enterInitializationMode()
 
@@ -263,8 +261,7 @@ class FMU:
 
 
     def simulate(self,
-                 start_time: int = 0,
-                 stop_time: int = 86_400,
+                 simulation_period: int = 86_400,
                  step_size: int = 900,
                  observables: list[str] = [],
                  walker: Dict[str, IntervalWalker] = {} 
@@ -272,7 +269,8 @@ class FMU:
         
         rows = []
         
-        self.time = start_time
+        start_time = self.time
+        stop_time = start_time + simulation_period
 
         # If not in right mode -> go there.
         if not self.has_entered_exited_mode:
@@ -321,7 +319,11 @@ class FMU:
 
         return fmu_copy
 
+    def __str__(self):
+        return f"buildyn.fmu.FMU object at {hex(id(self))}:\n\n\t- src file: {self.fmu_file}\n\t- time: {self.time}\n\t- initialized: {self.has_entered_exited_mode}"
 
+    def __repr__(self):
+        return f"buildyn.fmu.FMU object at {hex(id(self))}:\n\n\t- src file: {self.fmu_file}\n\t- time: {self.time}\n\t- initialized: {self.has_entered_exited_mode}"
 
 
         
