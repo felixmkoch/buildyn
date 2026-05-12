@@ -12,7 +12,7 @@ The only hard requirement for this package is python == 3.13.
 
 ### Installation via Pip
 
-We distribute the newest version of this package over PyPI [available in future releases]. 
+We distribute the newest version of this package over PyPI. 
 
 ```bash
 pip install buildyn
