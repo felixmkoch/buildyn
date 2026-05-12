@@ -1,6 +1,6 @@
 [![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)](https://www.python.org/downloads/release/python-3100/)
 [![GitHub License](https://img.shields.io/badge/License-MIT-blue)](https://github.com/felixmkoch/buildyn/blob/main/LICENSE)
-![PyPI](https://img.shields.io/badge/PyPI-todo-white)
+![PyPI](https://img.shields.io/badge/PyPI-available-white)
 ![Version](https://img.shields.io/badge/Version-1.0.0-green)
 
 BuilDyn is an open-source free-to-use PyPI package to help simulating Functional Mockup Units (FMU) for buildings. Its primarily use is probing buildings thermal dynamics, randomizing building parameters, and demand-driven building simulation. As this is an open-source project, we encourage users and researchers to contribute with new ideas and directions to follow for future releases! 
