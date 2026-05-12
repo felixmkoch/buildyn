@@ -59,11 +59,11 @@ observables = ["thermalZone.TAir", "heatingPower"]
 rw = RandomWalker(min=10, max=500, is_discrete=True)
 iw = IntervalWalker(rw, 900) # 900 is the step size of the walker.
 
-prior = BuilDyn(fmu, observables=observables)
+buildyn = BuilDyn(fmu, observables=observables)
 
-prior.add_walker_distribution("heatingPower", iw)
+buildyn.add_walker_distribution("heatingPower", iw)
 
-print(prior.sample_one())
+print(buildyn.sample_one())
 ```
 
 To explore all features of BuilDyn, we refer to our notebooks; each of them thematizes one key part.
