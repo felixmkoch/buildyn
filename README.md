@@ -1,5 +1,5 @@
 [![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)](https://www.python.org/downloads/release/python-3100/)
-[![GitHub License](https://img.shields.io/badge/License-MIT-blue)](https://inf-git.th-rosenheim.de/felix.koch/mo_prior/-/blob/main/LICENSE)
+[![GitHub License](https://img.shields.io/badge/License-MIT-blue)](https://github.com/felixmkoch/buildyn/blob/main/LICENSE)
 ![PyPI](https://img.shields.io/badge/PyPI-todo-white)
 ![Version](https://img.shields.io/badge/Version-1.0.0-green)
 
