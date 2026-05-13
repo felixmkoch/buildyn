@@ -35,8 +35,7 @@ class BuilDyn:
 
 
     def sample_one(self,
-                   start_time: int = 0,
-                   stop_time: int = 86_400,
+                   simulation_period: int = 24*3600,
                    step_size: int = 900):
         
 
@@ -56,8 +55,7 @@ class BuilDyn:
             walker[param] = walker_dist.sample_one()
 
         res = fmu.simulate(
-                    start_time=start_time,
-                    stop_time=stop_time,
+                    simulation_period=simulation_period,
                     step_size=step_size,
                     observables=self.observables,
                     walker=walker
