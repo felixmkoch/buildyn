@@ -10,6 +10,7 @@ authors = [
     { name="Thomas Krug", email="thomas.krug@th-rosenheim.de" }
 ]
 readme = "README.md"
+license = {text = "MIT"}
 requires-python = "==3.13.*"
 
 dependencies = [
