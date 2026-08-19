@@ -2,6 +2,7 @@ from fmpy import read_model_description, extract
 from fmpy.fmi2 import FMU2Slave
 from buildyn.walker.interval_walker import IntervalWalker
 from buildyn.converter.converter import Converter
+from buildyn.checkpoint import Checkpoint
 from typing import Dict, List
 import pandas as pd
 
@@ -93,6 +94,59 @@ class FMU:
         self.fmu.reset()
 
         self.has_entered_exited_mode = False
+
+
+    def _require_state_transplant_capability(self):
+
+        if not self.model_description.coSimulation.canGetAndSetFMUstate:
+            raise RuntimeError(
+                f"FMU '{self.model_identifier}' does not support getting/setting FMU "
+                "state (canGetAndSetFMUstate=false), so checkpoints and branching are "
+                "unavailable on this instance. This is a known limitation of "
+                "OpenModelica-exported FMUs; Dymola-family FMUs are supported."
+            )
+
+
+    def get_checkpoint(self) -> Checkpoint:
+
+        self._require_state_transplant_capability()
+
+        return Checkpoint(
+            state=self.fmu.getFMUState(),
+            time=self.time,
+            origin=self,
+        )
+
+
+    def set_checkpoint(self, checkpoint: Checkpoint):
+
+        if not checkpoint.belongs_to(self):
+            raise ValueError(
+                "This checkpoint originates from a different FMU instance. "
+                "set_checkpoint() only restores a checkpoint onto the exact instance "
+                "that produced it; use branch_from() to adopt another instance's state."
+            )
+
+        self.fmu.setFMUstate(checkpoint.state)
+        self.time = checkpoint.time
+
+
+    def branch_from(self, checkpoint: Checkpoint, params: dict | None = None, start_time: int | None = None):
+
+        self._require_state_transplant_capability()
+
+        self.reset_fmu_state()
+
+        self.fmu.setupExperiment(
+            startTime=start_time if start_time is not None else self.start_time
+        )
+
+        self.set_initial_variables(
+            params if params is not None else (self.updated_fmu_state or self.init_values)
+        )
+
+        self.fmu.setFMUstate(checkpoint.state)
+        self.time = checkpoint.time
 
 
     def set_converter(self, converter: Converter):
