@@ -5,7 +5,7 @@
 # Custom Ignores
 *test.py
 *.fmu
-resources/*
+#resources/*
 *.mos
 
 
