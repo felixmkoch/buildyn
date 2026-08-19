@@ -4,6 +4,7 @@
 
 # Custom Ignores
 *test.py
+!conftest.py
 *.fmu
 #resources/*
 *.mos

@@ -30,7 +30,11 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "ruff",
+    "pytest==9.1.1",
 ]
 
 [tool.setuptools.packages.find]
 where = ["."]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
