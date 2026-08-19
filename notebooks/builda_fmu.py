@@ -1,3 +1,5 @@
+import platform
+
 from buildyn.converter import Converter
 from buildyn.examples.builda.converter_functions.Component_configurator import Component_configurator
 from buildyn.examples.builda.converter_functions.Link_resolver import Link_resolver
@@ -8,6 +10,17 @@ from buildyn.examples.builda.converter_functions.Nominal_heating_power_calculato
 from buildyn.examples.builda.converter_functions.RC_Distribution_Configurator import RC_Distribution_Configurator
 from buildyn.examples.builda.converter_functions.Zone_dimensions_calculator import Zone_dimensions_calculator
 from buildyn.examples.builda.converter_functions.Component_properties_calculator import Component_properties_calculator
+
+
+# Selects the BuilDa FMU built for the current host OS.
+def get_builda_fmu_path() -> str:
+    system = platform.system()
+    if system == "Windows":
+        return "resources/building_OM_windows_v2.fmu"
+    elif system == "Linux":
+        return "resources/building_dymola_linux_v3.fmu"
+    else:
+        raise RuntimeError(f"No BuilDa FMU available for host OS '{system}'.")
 
 
 # Helper function to retrieve the pre-configured BuilDa FMU with all converter functions and default values set.
@@ -83,7 +96,7 @@ def get_configured_builda_fmu(internal_controller: bool = False):
     import json
 
     # Example FMU from BuilDa 2.0
-    fmu_path = "resources/building.fmu"
+    fmu_path = get_builda_fmu_path()
 
     # Initial variables from the BuilDa 2.0 FMU -> Needs extra variables here because the BuilDa FMU is weird. For other use-cases you don't have to do this.
     with open("resources/fmu_state_dict.json", "r") as f:
