@@ -5,6 +5,7 @@ from buildyn.converter.converter import Converter
 from buildyn.checkpoint import Checkpoint
 from typing import Dict, List
 import pandas as pd
+import shutil
 
 from copy import deepcopy
 
@@ -149,7 +150,7 @@ class FMU:
         self.time = checkpoint.time
 
 
-    def set_converter(self, converter: Converter):
+    def set_converter(self, converter: Converter | None):
 
         self.converter = converter
 
@@ -372,6 +373,11 @@ class FMU:
         fmu_copy.set_converter(self.converter)
 
         return fmu_copy
+
+    def __del__(self):
+        unzip_dir = getattr(self, "unzip_dir", None)
+        if unzip_dir:
+            shutil.rmtree(unzip_dir, ignore_errors=True)
 
     def __str__(self):
         return f"buildyn.fmu.FMU object at {hex(id(self))}:\n\n\t- src file: {self.fmu_file}\n\t- time: {self.time}\n\t- initialized: {self.has_entered_exited_mode}"
