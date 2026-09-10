@@ -7,7 +7,7 @@ BuilDyn is an open-source free-to-use PyPI package to help simulating Functional
 
 ## Setup
 
-The only hard requirement for this package is python == 3.13.  
+The only hard requirement for this package is python >= 3.10 and < 3.14.  
  Aside from that, there are two ways to build this package in your environment:
 
 ### Installation via Pip
